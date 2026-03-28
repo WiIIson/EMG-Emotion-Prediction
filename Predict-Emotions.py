@@ -28,14 +28,14 @@ def load_data(p=0.1, batch_size=25):
     y_train = torch.from_numpy(y_train.to_numpy(dtype=np.long))
     X_train = torch.from_numpy(X_train.to_numpy(dtype=np.float32))
     trainset = torch.utils.data.TensorDataset(X_train, y_train)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, drop_last=True)
     # Create testloader
     y_test = test_df['id']
     X_test = test_df.drop(['File_Path', 'id'], axis=1)
     y_test = torch.from_numpy(y_test.to_numpy(dtype=np.long))
     X_test = torch.from_numpy(X_test.to_numpy(dtype=np.float32))
     testset = torch.utils.data.TensorDataset(X_test, y_test)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=True)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, drop_last=True)
 
     return trainloader, testloader
     
@@ -115,12 +115,23 @@ def test_model(testloader, model):
 class EmotionPredictionModel(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.fc1 = torch.nn.Linear(70, 160)
-        self.fc2 = torch.nn.Linear(160, 7)
+        self.fc1 = torch.nn.Linear(70, 256)
+        self.fc2 = torch.nn.Linear(256, 128)
+        self.fc3 = torch.nn.Linear(128, 64)
+        self.fc4 = torch.nn.Linear(64, 7)
+
+        self.dropout = torch.nn.Dropout(0.3)
+        self.bn1 = torch.nn.BatchNorm1d(256)
+        self.bn2 = torch.nn.BatchNorm1d(128)
+        self.bn3 = torch.nn.BatchNorm1d(64)
 
     def forward(self, x):
-        x = torch.nn.functional.relu(self.fc1(x))
-        x = self.fc2(x)
+        x = torch.relu(self.bn1(self.fc1(x)))
+        x = self.dropout(x)
+        x = torch.relu(self.bn2(self.fc2(x)))
+        x = self.dropout(x)
+        x = torch.relu(self.bn3(self.fc3(x)))
+        x = self.fc4(x)
         return x
 
 if __name__ == '__main__':
