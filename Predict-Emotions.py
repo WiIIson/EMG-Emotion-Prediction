@@ -18,7 +18,9 @@ Capture
 def load_data(p=0.1, batch_size=25):
     # Load/clean
     df = pd.read_csv('Features.csv')
-    df['id'] = df['File_Path'].str.extract(r'(\d{2}-\d{2}-\d{2})')[0].str[3:5].astype(int) - 1
+    df['id'] = df['File_Path'].str.extract(r'(\d{2}-\d{2}-\d{2})')[0].str[3:5].astype(int) - 2
+    df = df[df["id"] != -1]
+
     # Split into train/test dataframe
     train_df = df.sample(frac=1-p, random_state=42)
     test_df = df.drop(train_df.index)
@@ -118,19 +120,21 @@ class EmotionPredictionModel(torch.nn.Module):
         self.fc1 = torch.nn.Linear(70, 256)
         self.fc2 = torch.nn.Linear(256, 128)
         self.fc3 = torch.nn.Linear(128, 64)
-        self.fc4 = torch.nn.Linear(64, 7)
+        self.fc4 = torch.nn.Linear(64, 6)
 
         self.dropout = torch.nn.Dropout(0.3)
         self.bn1 = torch.nn.BatchNorm1d(256)
         self.bn2 = torch.nn.BatchNorm1d(128)
         self.bn3 = torch.nn.BatchNorm1d(64)
 
+        self.gelu = torch.nn.GELU()
+
     def forward(self, x):
-        x = torch.relu(self.bn1(self.fc1(x)))
+        x = self.gelu(self.bn1(self.fc1(x)))
         x = self.dropout(x)
-        x = torch.relu(self.bn2(self.fc2(x)))
+        x = self.gelu(self.bn2(self.fc2(x)))
         x = self.dropout(x)
-        x = torch.relu(self.bn3(self.fc3(x)))
+        x = self.gelu(self.bn3(self.fc3(x)))
         x = self.fc4(x)
         return x
 
