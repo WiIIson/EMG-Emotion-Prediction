@@ -50,21 +50,33 @@ def train_model(trainloader, model, epochs=10):
     # Main training loop
     for epoch in range(epochs):
         epoch_loss = 0
+        correct=0
+        total=0
 
+        model.train()
         for X, Y in trainloader:
             # Forward pass
             outputs = model(X)
             loss = criterion(outputs, Y.long())
+            
             # Backward pass and optimize
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            
             # Accumulate loss
             epoch_loss += float(loss.item())
+
+            # Accuracy calculation
+            prediction = torch.argmax(outputs, dim=1)
+            correct += (prediction==Y).sum().item()
+            total += Y.size(0)
         
         # Print epoch stats
         epoch_loss /= len(trainloader)
-        print(f'Epoch: [{epoch+1}/{epochs}], Loss: [{epoch_loss:.2f}]')
+        accuracy = correct / total
+
+        print(f'Epoch: [{epoch+1}/{epochs}]\tLoss: [{epoch_loss:.2f}]\tAccuracy: [{accuracy*100:.2f}%]')
 
 # Basic testing method
 def test_model(testloader, model):
@@ -83,14 +95,21 @@ def test_model(testloader, model):
             all_labels.append(Y.cpu())
             all_predictions.append(torch.argmax(outputs, dim=1).cpu())
     
+    # Calculate loss
     epoch_loss /= len(testloader)
     print(f"Test Loss: [{epoch_loss:.2f}]")
 
+    # Get labels and predictions
     all_labels = torch.cat(all_labels)
     all_predictions = torch.cat(all_predictions)
+
+    # Calculate accuracy
+    accuracy = (all_predictions == all_labels).float().mean().item()
+    print(f'Test Accuracy: [{accuracy*100:.2f}%]')
+
     df = pd.DataFrame({'labels':all_labels.numpy(), 'predictions':all_predictions.numpy()})
     
-    return df, epoch_loss
+    return df, epoch_loss, accuracy
 
 # Basic classification model, tweak this later to get better accuracy
 class EmotionPredictionModel(torch.nn.Module):
@@ -107,5 +126,5 @@ class EmotionPredictionModel(torch.nn.Module):
 if __name__ == '__main__':
     model = EmotionPredictionModel()
     trainloader, testloader = load_data()
-    train_model(trainloader, model, 50)
-    df, epoch_loss = test_model(testloader, model)
+    train_model(trainloader, model, 500)
+    df, epoch_loss, accuracy = test_model(testloader, model)
