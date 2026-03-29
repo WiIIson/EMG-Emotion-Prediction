@@ -141,5 +141,5 @@ class EmotionPredictionModel(torch.nn.Module):
 if __name__ == '__main__':
     model = EmotionPredictionModel()
     trainloader, testloader = load_data()
-    train_model(trainloader, model, 500)
+    train_model(trainloader, model, 200)
     df, epoch_loss, accuracy = test_model(testloader, model)
