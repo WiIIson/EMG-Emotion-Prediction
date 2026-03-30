@@ -113,6 +113,25 @@ def test_model(testloader, model):
     
     return df, epoch_loss, accuracy
 
+# Calculate the accuracy for each label
+def class_accuracy(df):
+    # Make sure labels is a column, not an index
+    df = df.reset_index(drop=True)
+
+    # Create a boolean column for correctness
+    df['correct'] = df['labels'] == df['predictions']
+
+    # Compute per-class accuracy
+    accuracies = df.groupby('labels')['correct'].mean()
+
+    # Print results
+    for label, acc in accuracies.items():
+        print(f'Label {label}: {acc:.2%} accuracy')
+
+    return accuracies
+
+
+
 # Basic classification model, tweak this later to get better accuracy
 class EmotionPredictionModel(torch.nn.Module):
     def __init__(self):
@@ -143,3 +162,7 @@ if __name__ == '__main__':
     trainloader, testloader = load_data()
     train_model(trainloader, model, 200)
     df, epoch_loss, accuracy = test_model(testloader, model)
+    print(df.columns.tolist())
+    class_accuracy(df)
+    cm = pd.crosstab(df['labels'], df['predictions'])
+    print(cm)
