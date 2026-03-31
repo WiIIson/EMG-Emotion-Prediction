@@ -17,7 +17,7 @@ Oluwateniola "Teni" Adegbite
 - Literature review
 
 Dilan Mian
-- Literature review
+- Participated in collecting and reporting on half of the papers cited in the literature review.
 
 Alannis Davis
 
