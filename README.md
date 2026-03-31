@@ -4,22 +4,25 @@ Predicting emotional state from EMG data.
 
 ## Member Contributions
 
-William Conley
+William Conley (50%)
 - PeakAffectDS EMG preproecssing
 - EMG feature extraction
 - Creation of classification model and testing environment
 - Fine tuning of classification model
 - Creating presentation and PowerPoint slides
+- Giving presentation
 
-Adrian Fudge
+Adrian Fudge (10%)
+- Giving presentation
 
-Oluwateniola "Teni" Adegbite
-- Literature review
+Oluwateniola "Teni" Adegbite (15%)
+- Collecting and reporting on papers in literature review
 
-Dilan Mian
-- Participated in collecting and reporting on half of the papers cited in the literature review.
+Dilan Mian (15%)
+- Collecting and reporting on papers in literature review
 
-Alannis Davis
+Alannis Davis (10%)
+- Group leader and communications
 
 ## Final Results
 
