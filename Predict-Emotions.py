@@ -149,11 +149,11 @@ class EmotionPredictionModel(torch.nn.Module):
         self.gelu = torch.nn.GELU()
 
     def forward(self, x):
-        x = self.gelu(self.bn1(self.fc1(x)))
+        x = self.bn1(self.gelu(self.fc1(x)))
         x = self.dropout(x)
-        x = self.gelu(self.bn2(self.fc2(x)))
+        x = self.bn2(self.gelu(self.fc2(x)))
         x = self.dropout(x)
-        x = self.gelu(self.bn3(self.fc3(x)))
+        x = self.bn3(self.gelu(self.fc3(x)))
         x = self.fc4(x)
         return x
 

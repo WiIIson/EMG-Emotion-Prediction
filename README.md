@@ -9,7 +9,7 @@ William Conley
 - EMG feature extraction
 - Creation of classification model and testing environment
 - Fine tuning of classification model
-- Presentation and PowerPoint slides
+- Creating presentation and PowerPoint slides
 
 Adrian Fudge
 
